@@ -1,30 +1,31 @@
-name: Daily LeetCode Update
+name: Daily LeetCode Tracker
 
 on:
-  schedule:
-    - cron: '10,20 18 * * *'   # 11:40 PM & 11:50 PM IST
   workflow_dispatch:
+
+  schedule:
+    - cron: "10,20 18 * * *"   # 11:40 PM & 11:50 PM IST
 
 jobs:
   update:
-    runs-on: windows-latest   # IMPORTANT for certutil
+
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.11"
 
-      - name: Install Dependencies
-        run: pip install gspread oauth2client requests
+      - name: Install dependencies
+        run: pip install requests gspread oauth2client
 
-      - name: Create credentials.json from secret
+      - name: Restore credentials
         run: |
-          echo ${{ secrets.GOOGLE_CREDENTIALS }} > creds.txt
-          certutil -decode creds.txt credentials.json
+          echo "${{ secrets.GOOGLE_CREDS }}" | base64 --decode > credentials.json
 
-      - name: Run Daily Script
+      - name: Run daily script
         run: python daily_update.py
