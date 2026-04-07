@@ -1,0 +1,29 @@
+name: Daily LeetCode Update
+
+on:
+  schedule:
+    - cron: '10,20 18 * * *'   # 11:40 PM & 11:50 PM IST
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create credentials.json
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+
+      - name: Run Daily Script
+        run: python daily_update.py
